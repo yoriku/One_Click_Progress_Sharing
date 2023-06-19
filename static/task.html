@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Statistics Application</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css" rel="stylesheet" />
+    <!-- <link rel="stylesheet" href="/static/style.css"> -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-beta1/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .form-container {
+            margin: auto;
+            padding: 2em;
+        }
+
+        body {
+            font-size: 150%;
+            background-color: #eee;
+        }
+
+        h1 {
+            color: #444;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 0.5em;
+            font-weight: bold;
+        }
+
+        .card-red {
+            background-color: #ffdddd;
+            /* 薄い赤色 */
+        }
+
+        .card-blue {
+            background-color: #ddeeff;
+            /* 薄い青色 */
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="form-container my-5">
+        <h1 class="text-center my-3">社員の状況</h1>
+
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="ojt-tab" data-toggle="tab" href="#ojt" role="tab" aria-controls="ojt"
+                    aria-selected="true">OJT社員</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="new-employee-tab" data-toggle="tab" href="#new-employee" role="tab"
+                    aria-controls="new-employee" aria-selected="false">新入社員</a>
+            </li>
+        </ul>
+        <div class="form-container my-5">
+
+            <ul class="nav nav-tabs" id="myTab" role="tablist"></ul>
+
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active" id="ojt" role="tabpanel" aria-labelledby="ojt-tab">
+
+                        <div id="senior-employee">
+                            <div class="card card-blue">
+                                <div class="card-header">
+                                    <h4 id="q_ok_h">対応可能</h4>
+                                </div>
+                                <div class="card-body" id="q_ok"></div>
+                            </div>
+                            <div class="card mt-4">
+                                <div class="card-header">
+                                    <h4 id="q_ok_2_h">まあまあ可能</h4>
+                                </div>
+                                <div class="card-body" id="q_ok_2"></div>
+                            </div>
+                            <div class="card mt-4">
+                                <div class="card-header">
+                                    <h4 id="q_not_h">対応不可</h4>
+                                </div>
+                                <div class="card-body" id="q_not"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="new-employee" role="tabpanel" aria-labelledby="new-employee-tab">
+                        <!-- Your New Employee content here -->
+                        <div class="card card-red">
+                            <div class="card-header">
+                                <h4 id="not_well_h">要対応</h4>
+                            </div>
+                            <div class="card-body" id="not_well"></div>
+                        </div>
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h4 id="well_h">順調</h4>
+                            </div>
+                            <div class="card-body" id="well"></div>
+                        </div>
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h4 id="well_2_h">まあまあ順調</h4>
+                            </div>
+                            <div class="card-body" id="well_2"></div>
+                        </div>
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h4 id="not_well_2_h">順調でない</h4>
+                            </div>
+                            <div class="card-body" id="not_well_2"></div>
+                        </div>
+                        
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"
+        integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA=="
+        crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script>
+        //通知を出す
+        function sendNotification(title, url) {
+            if (!("Notification" in window)) {
+                return;
+            } else if (Notification.permission === "granted") {
+                var notification = new Notification(title, {
+                    body: "お疲れ様です",
+                });
+                notification.addEventListener('click', function () {
+                    window.open(url, "_blank");
+                });
+            } else if (Notification.permission !== "denied") {
+                Notification.requestPermission().then(function (permission) {
+                    if (permission === "granted") {
+                        var notification = new Notification(title, {
+                            body: "お疲れ様です",
+                        });
+                        notification.addEventListener('click', function () {
+                            window.open(url, "_blank");
+                        });
+                    }
+                });
+            }
+        }
+
+
+        //次回の通知を予約
+        function sendScheduledNotification(startHour, endHour, interval, title, url) {
+            const now_tmp = new Date();
+            const jstOffset = 9 * 60;
+            const utc = now_tmp.getTime() + now_tmp.getTimezoneOffset() * 60 * 1000;
+            const now = new Date(utc + jstOffset * 60 * 1000);
+
+            // 現在の時刻が範囲内かチェック
+            if (now.getHours() >= startHour && now.getHours() < endHour) {
+                // 次回の実行時刻を計算
+                const nextRun = new Date(now.getTime() + interval * 60 * 1000);
+
+                if (nextRun.getHours() >= endHour) {
+                    return;
+                }
+                console.log(nextRun);
+                sendNotification(title, url);
+                console.log(url);
+
+                setTimeout(() => {
+                    sendScheduledNotification(startHour, endHour, interval, title, url);
+                }, interval * 60 * 1000);
+            }
+        }
+
+        //新しく生成する
+        function create_list(name, job, progress, question, detail) {
+            console.log(name)
+            var N = name.length;
+            for (i = 0; i < N; i++) {
+                if(job[i] == "manager"){
+                    if (question[i] == "可能") {
+                        var element = document.getElementById('q_ok');
+                        var new_element = document.createElement('p');
+                        new_element.textContent = name[i];
+                        element.appendChild(new_element);
+                    }
+                    if (question[i] == "まあまあ可能") {
+                        var element = document.getElementById("q_ok_2");
+                        var new_element = document.createElement('p');
+                        new_element.textContent = name[i];
+                        element.appendChild(new_element);
+                    }
+                    if (question[i] == "不可能") {
+                        var element = document.getElementById('q_not');
+                        var new_element = document.createElement('p');
+                        new_element.textContent = name[i];
+                        element.appendChild(new_element);
+                    }
+                }else{
+                    if (progress[i] == "順調") {
+                        var element = document.getElementById('well');
+                        var new_element = document.createElement('p');
+                        new_element.textContent = name[i];
+                        console.log(element);
+                        element.appendChild(new_element);
+                    }
+                    if (progress[i] == "まあまあ順調") {
+                        var element = document.getElementById("well_2");
+                        var new_element = document.createElement('p');
+                        new_element.textContent = name[i];
+                        element.appendChild(new_element);
+                    }
+                    if (progress[i] == "順調じゃない") {
+                        var element = document.getElementById('not_well_2');
+                        var new_element = document.createElement('p');
+                        new_element.textContent = name[i] + ": " + detail[i];
+                        console.log(element);
+                        element.appendChild(new_element);
+                    }
+                    if (progress[i] == "要対応") {
+                        var element = document.getElementById("not_well");
+                        var new_element = document.createElement('p');
+                        new_element.textContent = name[i] + ": " + detail[i];
+                        element.appendChild(new_element);
+                    }
+                }
+            }
+        }
+
+
+        //現在の要素を削除する
+        function remove_p(id) {
+            var p_element = document.getElementById(id);
+            while (p_element.firstChild) {
+                p_element.removeChild(p_element.firstChild);
+            }
+        }
+
+
+        //更新のあった物を書き換える
+        function renew_list(name, job, progress, question, detail) {
+            remove_p("q_ok");
+            remove_p("q_ok_2");
+            remove_p("q_not");
+            remove_p("well");
+            remove_p("well_2");
+            remove_p("not_well");
+            remove_p("not_well_2");
+            create_list(name, job, progress, question, detail);
+        }
+
+
+
+        var socket = io();
+        socket.on('connect', function () {
+            console.log('Socket connected');
+        });
+
+        socket.on('disconnect', function () {
+            console.log('Socket disconnected');
+        });
+
+        socket.on('notification', function (msg) {
+            sendNotification(msg.data[0], msg.data[1]);
+        });
+
+        socket.on('schedulednotification', function (msg) {
+            sendScheduledNotification(msg.data[0], msg.data[1], msg.data[2], msg.data[3], msg.data[4]);
+        });
+
+        socket.on('create_list', function (msg) {
+            create_list(msg.data[0], msg.data[1], msg.data[2], msg.data[3], msg.data[4]);
+        });
+
+        socket.on('renew_list', function (msg) {
+            renew_list(msg.data[0], msg.data[1], msg.data[2], msg.data[3], msg.data[4]);
+        });
+
+        function display_senior() {
+            document.getElementById('senior-employee').style.display = 'block';
+            document.getElementById('new-employee').style.display = 'none';
+        }
+
+        function display_new() {
+            document.getElementById('senior-employee').style.display = 'none';
+            document.getElementById('new-employee').style.display = 'block';
+        }
+
+    </script>
+
+    
+
+<div id="new-employee">
+
+
+</div>
+
+
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
+
+<script>
+        //create_list(["A","B","C","D"],["","","",""],["順調","","","要対応"],["","可能","不可能",""],["","","",""])
+        //renew_list(["A","B","C","D"],["","","",""],["順調","","","要対応"],["","まあまあ可能","不可能",""],["","","",""])
+</script>
+</body>
+
+</html>

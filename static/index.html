@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Index</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.css" rel="stylesheet" />
+</head>
+
+<body>
+    
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h1 class="text-center mt-4">おはようございます！</h1>
+                <form action="{{ url_for( 'task' ) }}" method="post" class="p-5 border rounded mt-4">
+                    <div class="form-group mt-4">
+                        <label for="name">name:</label>
+                        <input type="text" name="name" id="name" class="form-control" required>
+                    </div>
+                    <div class="text-center">
+                    <div class="btn-group mt-4 d-flex">
+                        <input type="radio" class="btn-check" id="manager" name="job" value="manager" checked />
+                        <label class="btn btn-light" for="manager">manager</label>
+                        <input type="radio" class="btn-check" id="member" name="job" value="member">
+                        <label class="btn btn-light" for="member">member</label>
+                    </div>
+                </div>
+                    <button type="submit" class="btn btn-primary btn-block mt-4">Submit</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.2.0/mdb.min.js"></script>
+</body>
+</html>
