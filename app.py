@@ -4,7 +4,7 @@ import pandas as pd
 from connect_db import regi_kintone, get_all_kintone
 from Line import send_line
 
-app = Flask(__name__, template_folder='test')
+app = Flask(__name__, template_folder='static')
 app.secret_key = 'gfshvghenytrhbertb'
 socketio = SocketIO(app, async_mode="gevent")
 
