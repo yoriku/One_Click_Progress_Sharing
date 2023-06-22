@@ -1,10 +1,10 @@
 # One_Click_Progress_Sharing
 Deliverables of the i-group at the BIPROGY hackathon
 
-# Getting Start
+# Getting Started
 1. You should get line notify and Kintone API keys
 2. You set Line API key in config/line.txt and Kintone API token in app.py var name is api_token
-3. If you run this program in your local computer, you have to use this program in __name__
+3. If you run this program in your local computer, you have to use this program in \_\_name\_\_
 
 ~~~ Python
 socketio.run(app, debug=True, port=1234)
